@@ -15,8 +15,8 @@ function App() {
   }, []);
 
   //ici on recupere les données du serveur au lancement de l'app
-  const userFromServer = window.user ?? user;
-  const indexCollectionFromServer = window.indexCollection ?? indexCollection;
+  var userFromServer = window.user ?? user;
+  var indexCollectionFromServer = window.indexCollection ?? indexCollection;
 
   // on recupere tous les labels pour generer les champs
   const labels = Array.from(getlabelList(indexCollectionFromServer));

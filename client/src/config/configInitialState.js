@@ -1,5 +1,7 @@
 import { user } from "../components/datas";
 
+var userFromServer = window.user ?? user;
+
 const setDayDate = () => {
   return new Date().toISOString().split("T")[0];
 };
@@ -15,7 +17,10 @@ export const initialStateConfigObject = {
   Formulaire: {
     Prescripteurs: {
       type: "text",
-      value: { id: user.User_Id, label: `${user.FirstName} ${user.LastName}` },
+      value: {
+        id: userFromServer.User_Id,
+        label: `${userFromServer.FirstName} ${userFromServer.LastName}`,
+      },
       disabled: true,
     },
     "Nom de la demande": { type: "text", value: "", hidden: true },
