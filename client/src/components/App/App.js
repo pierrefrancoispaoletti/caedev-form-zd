@@ -10,13 +10,26 @@ function App() {
   // on crée l'etat de l'application au demarage
   const [state, setState] = useState({});
 
-  useEffect(() => {
-    setState({ ...initialStateConfigObject });
-  }, []);
-
-  //ici on recupere les données du serveur au lancement de l'app
   var userFromServer = window.user ?? user;
   var indexCollectionFromServer = window.indexCollection ?? indexCollection;
+
+  useEffect(() => {
+    if (!edit) {
+      let initialState = { ...initialStateConfigObject };
+      const userId = userFromServer.User_Id;
+      const userFullName = `${userFromServer.FirstName} ${userFromServer.LastName}`;
+      initialState.Formulaire.Prescripteurs.value = {
+        id: userId,
+        label: userFullName.trim(),
+      };
+
+      initialState["Type de document"]["Type de document"].value = {
+        id: "1",
+        label: "Formulaire",
+      };
+      setState({ ...initialState });
+    }
+  }, []);
 
   // on recupere tous les labels pour generer les champs
   const labels = Array.from(getlabelList(indexCollectionFromServer));
@@ -27,6 +40,10 @@ function App() {
 
   return (
     <div className="App">
+      <header className="App-header">
+        <h1 className="App-title">Formulaire de demande d'engagement</h1>
+        <div className="App-decorator"></div>
+      </header>
       {Object.keys(state).length && (
         <Form
           labels={labels}

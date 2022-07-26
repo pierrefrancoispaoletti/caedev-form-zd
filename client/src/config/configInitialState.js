@@ -1,7 +1,3 @@
-import { user } from "../components/datas";
-
-var userFromServer = window.user ?? user;
-
 const setDayDate = () => {
   return new Date().toISOString().split("T")[0];
 };
@@ -11,16 +7,13 @@ export const initialStateConfigObject = {
     hidden: true,
     "Type de document": {
       hidden: true,
-      value: { id: "1", label: "Formulaire" },
+      value: "",
     },
   },
   Formulaire: {
     Prescripteurs: {
       type: "text",
-      value: {
-        id: userFromServer.User_Id,
-        label: `${userFromServer.FirstName} ${userFromServer.LastName}`,
-      },
+      value: "",
       disabled: true,
     },
     "Nom de la demande": { type: "text", value: "", hidden: true },
@@ -52,7 +45,7 @@ export const initialStateConfigObject = {
     "Responsable N+2": { type: "text", value: "", hidden: true },
     "Responsable N+3": { type: "text", value: "", hidden: true },
     "Montant du Budget HT": { type: "text", value: "" },
-    "Je respecte le Budget": { type: "text", value: "" },
+    "Je respecte le Budget": { type: "text", value: "", disabled: true },
     Commentaire: { type: "text", value: "" },
   },
   "Refusé par :": {

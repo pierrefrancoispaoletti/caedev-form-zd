@@ -3424,5 +3424,5 @@ export const modeleArticle = {
   compteComptableTVA: "",
   montantHT: "",
   nomArticleVentilation: "",
-  axeAnalytique: "",
+  axeAnalytique: { value: "" },
 };

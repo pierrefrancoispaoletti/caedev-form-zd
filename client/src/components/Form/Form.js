@@ -9,16 +9,57 @@ import {
   Button,
   Container,
   Autocomplete,
+  Icon,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import ClearIcon from "@mui/icons-material/Clear";
+import CheckIcon from "@mui/icons-material/Check";
 
 import axios from "axios";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import {
+  convertObjectToArrayOfObject,
+  getDefaultProps,
+} from "../../utils/functions";
 import { modeleArticle } from "../datas";
 const Form = ({ labels, datas, state, setState }) => {
+  const [analytique, setAnalytique] = useState({});
+  ////////////////////////////////////////////////////////////////////////////////////////
+  /////////////// Au chargement de l'application, j'ajoute un article et je vais chercher l'analytique ///////////////////////////////////////////////////////////////////////////
+  useEffect(() => {
+    if (
+      Object.keys(state).length > 0 &&
+      state["Comptabilité"]["Articles"].length === 0
+    ) {
+      handleAddArticle();
+    }
+    axiosCallGetAnalytique();
+  }, []);
+
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////  Recuperation de l'analytique //////////////////////////////
+  const axiosCallGetAnalytique = useCallback(async () => {
+    let response = await axios({
+      method: "GET",
+      url: "https://armoires.zeendoc.com/ca_edeveloppement/_ClientSpecific/React_Form_DE/REST_API_ANALYTIQUE.php",
+    });
+
+    if (response.status === 200 && Object.keys(analytique).length === 0) {
+      let parsedDatas = JSON.parse(response.data.analytique)[0];
+
+      let newAnalytique = convertObjectToArrayOfObject(parsedDatas.VALEURS);
+
+      setAnalytique([...newAnalytique]);
+    }
+  }, [analytique]);
+  //////////////////////////////// Envoi des données //////////////////////////////////
+  /////
   const axiosCall = async () => {
     const response = await axios({
       method: "POST",
       url: "traitement.php",
+      data: state,
     });
   };
 
@@ -27,7 +68,15 @@ const Form = ({ labels, datas, state, setState }) => {
 
     axiosCall();
   };
+  ///////////////////////////////////////////////////////////////////////////////////
 
+  ////////////////////////////////////////////////////////////////
+  ///// convertion de l'analytique au format tableau d'objet ////
+  const defaultPropsAnalytique = getDefaultProps(analytique);
+  ////////////////////////////////////////////////////////////////
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  //// Fonctions de modification de l'etat du formulaire ////
   const handleChangeTextInput = useCallback(
     (e, label) => {
       const { value, name } = e.target;
@@ -40,16 +89,41 @@ const Form = ({ labels, datas, state, setState }) => {
   );
 
   const handleChangeSelectInput = useCallback(
-    (e, label, newValue) => {
+    (e, label, newValue, ligne) => {
+      console.log(ligne);
       const { id } = e.target;
       const shortLabel = id.split("__")[1];
-      setState({
-        ...state,
-        [label]: {
-          ...state[label],
-          [shortLabel]: { ...state[label][shortLabel], value: newValue },
-        },
-      });
+
+      if (shortLabel !== "axeAnalytique") {
+        setState({
+          ...state,
+          [label]: {
+            ...state[label],
+            [shortLabel]: { ...state[label][shortLabel], value: newValue },
+          },
+        });
+      } else {
+        let oldArticles = [...state["Comptabilité"]["Articles"]];
+
+        oldArticles = oldArticles.map((article, index) => {
+          if (ligne === index) {
+            return {
+              ...article,
+              axeAnalytique: { ...article["axeAnalytique"], value: newValue },
+            };
+          } else {
+            return article;
+          }
+        });
+
+        setState({
+          ...state,
+          Comptabilité: {
+            ...state["Comptabilité"],
+            Articles: [...oldArticles],
+          },
+        });
+      }
     },
     [setState, state]
   );
@@ -112,25 +186,63 @@ const Form = ({ labels, datas, state, setState }) => {
 
     return amount;
   }, [state]);
+  /////////////////////////////////////////////////////////////////////////////////////////
+
+  const checkBudget = (budgetTotal, montantTotalArticles) => {
+    if (budgetTotal && montantTotalArticles) {
+      if (Number(montantTotalArticles) <= Number(budgetTotal)) {
+        setState({
+          ...state,
+          Validation: {
+            ...state.Validation,
+            "Je respecte le Budget": {
+              ...state.Validation["Je respecte le Budget"],
+              value: { id: 1, label: "Oui" },
+              error: false,
+            },
+          },
+        });
+      } else {
+        setState({
+          ...state,
+          Validation: {
+            ...state.Validation,
+            "Je respecte le Budget": {
+              ...state.Validation["Je respecte le Budget"],
+              value: { id: 2, label: "Non" },
+              error: true,
+            },
+          },
+        });
+      }
+    }
+  };
+  let budgetTotal = state["Validation"]["Montant du Budget HT"].value;
+
+  let montantTotalArticles = computeTotalAmount();
 
   useEffect(() => {
-    if (
-      Object.keys(state).length > 0 &&
-      state["Comptabilité"]["Articles"].length === 0
-    ) {
-      handleAddArticle();
-    }
-  }, []);
+    checkBudget(budgetTotal, montantTotalArticles);
+  }, [budgetTotal, montantTotalArticles]);
 
   return (
-    <Box component="form" onSubmit={handleSubmit}>
+    <Box
+      component="form"
+      sx={{ border: "1px solid black", padding: "1.3em", margin: "5% 15%" }}
+      onSubmit={handleSubmit}
+    >
       {labels.map((label, index) => {
         const currentData = datas[index];
         return (
-          <Stack key={label + "-" + index} spacing={2}>
+          <Stack key={label + "-" + index} spacing={4}>
             <h2
               style={{
                 display: state?.[label]?.hidden ? "none" : "",
+                backgroundColor: "#1D9E90",
+                padding: "12px",
+                height: "",
+                color: "white",
+                borderRadius: "30px",
               }}
             >
               {label}
@@ -143,21 +255,18 @@ const Form = ({ labels, datas, state, setState }) => {
                 TYPE: type,
               } = data;
 
-              const newValeurs =
-                valeurs &&
-                Object.entries(valeurs).map((entry) =>
-                  Object.assign({}, { id: entry[0], label: entry[1] })
-                );
+              const newValeurs = convertObjectToArrayOfObject(valeurs);
 
               const defaultProps = {
                 options: newValeurs,
-                getOptionLabel: (option) => option?.label ?? "",
+                getOptionLabel: (option) => {
+                  return option?.label ?? "";
+                },
               };
 
               return (
                 <FormControl
                   key={label + "-" + shortLabel}
-                  fullWidth
                   sx={{
                     display: state?.[label]?.[shortLabel]?.hidden ? "none" : "",
                   }}
@@ -166,24 +275,6 @@ const Form = ({ labels, datas, state, setState }) => {
                   type !== "VENTILATION_HT" &&
                   Object.keys(valeurs).length > 0 ? (
                     <>
-                      {/* <InputLabel id={shortLabel}>{shortLabel}</InputLabel>
-                      <Select
-                        id={column}
-                        name={shortLabel}
-                        labelId={shortLabel}
-                        label={shortLabel}
-                        value={state?.[label]?.[shortLabel]?.value ?? ""}
-                        onChange={(e) => handleChangeTextInput(e, label)}
-                      >
-                        <MenuItem value=""></MenuItem>
-                        {Object.keys(valeurs).map((valeur) => {
-                          return (
-                            <MenuItem value={valeur}>
-                              {valeurs[valeur]}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select> */}
                       <Autocomplete
                         {...defaultProps}
                         id={`${column}__${shortLabel}__`}
@@ -198,9 +289,13 @@ const Form = ({ labels, datas, state, setState }) => {
                         renderInput={(params) => {
                           return (
                             <TextField
+                              error={
+                                state?.[label]?.[shortLabel]?.error ?? false
+                              }
                               {...params}
                               label={shortLabel}
-                              variant="outlined"
+                              variant="filled"
+                              size="small"
                             />
                           );
                         }}
@@ -230,7 +325,7 @@ const Form = ({ labels, datas, state, setState }) => {
                   ) : (
                     <Container
                       sx={{
-                        width: "100%",
+                        width: "80%",
                         justifyContent: "stretch",
                         flexDirection: "column",
                         alignItems: "center",
@@ -257,7 +352,6 @@ const Form = ({ labels, datas, state, setState }) => {
                                       }
                                       onChange={handleChangeArticle(index)}
                                     >
-                                      <MenuItem value=""></MenuItem>
                                       {Object.keys(valeurs).map((valeur) => {
                                         const article = `${
                                           valeurs[valeur].split(" - ")[0]
@@ -298,7 +392,6 @@ const Form = ({ labels, datas, state, setState }) => {
                                       }
                                       onChange={handleChangeArticle(index)}
                                     >
-                                      <MenuItem value=""></MenuItem>
                                       {Object.keys(valeurs).map((valeur) => {
                                         const compte = `${
                                           valeurs[valeur].split(" - ")[2]
@@ -311,6 +404,47 @@ const Form = ({ labels, datas, state, setState }) => {
                                       })}
                                     </Select>
                                   </FormControl>
+
+                                  {Object.keys(analytique).length && (
+                                    <FormControl>
+                                      <Autocomplete
+                                        {...defaultPropsAnalytique}
+                                        id={`${"custom_n1"}__${"axeAnalytique"}__`}
+                                        value={
+                                          state["Comptabilité"]["Articles"][
+                                            index
+                                          ]["axeAnalytique"]?.value ?? ""
+                                        }
+                                        onChange={(e, newValue) =>
+                                          handleChangeSelectInput(
+                                            e,
+                                            label,
+                                            newValue,
+                                            index
+                                          )
+                                        }
+                                        disableClearable
+                                        disabled={
+                                          state?.[label]?.[shortLabel]
+                                            ?.disabled ?? false
+                                        }
+                                        renderInput={(params) => {
+                                          return (
+                                            <TextField
+                                              error={
+                                                state?.[label]?.[shortLabel]
+                                                  ?.error ?? false
+                                              }
+                                              {...params}
+                                              label="Axe Analytique"
+                                              variant="filled"
+                                              size="small"
+                                            />
+                                          );
+                                        }}
+                                      />
+                                    </FormControl>
+                                  )}
                                 </Stack>
 
                                 <Container
@@ -321,16 +455,15 @@ const Form = ({ labels, datas, state, setState }) => {
                                 >
                                   <Button
                                     sx={{
-                                      borderRadius: "50%",
-                                      padding: "14px 2px",
-                                      fontSize: "1.3em",
+                                      marginTop: "12px",
                                     }}
                                     variant="contained"
                                     color="error"
                                     type="button"
+                                    size="small"
                                     onClick={() => handleDeleteArticle(index)}
                                   >
-                                    X
+                                    <ClearIcon />
                                   </Button>
                                 </Container>
                               </Container>
@@ -340,17 +473,13 @@ const Form = ({ labels, datas, state, setState }) => {
                           sx={{ display: "flex", justifyContent: "center" }}
                         >
                           <Button
-                            sx={{
-                              borderRadius: "50%",
-                              padding: "14px 2px",
-                              fontSize: "1.3em",
-                            }}
                             variant="contained"
                             color="success"
                             type="button"
+                            size="small"
                             onClick={() => handleAddArticle()}
                           >
-                            +
+                            <AddIcon />
                           </Button>
                         </Container>
                       </Stack>
@@ -363,8 +492,11 @@ const Form = ({ labels, datas, state, setState }) => {
         );
       })}
 
-      <Container sx={{ display: "flex", justifyContent: "center" }}>
-        <Button size="large" variant="outlined" color="success" type="submit">
+      <Container
+        sx={{ marginTop: "2em", display: "flex", justifyContent: "center" }}
+      >
+        <Button size="large" variant="contained" color="success" type="submit">
+          <CheckIcon />
           Soumettre
         </Button>
       </Container>
