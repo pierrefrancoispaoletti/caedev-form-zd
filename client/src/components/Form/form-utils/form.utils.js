@@ -16,7 +16,6 @@ const useHandleChangeTextInput = (setter, state) =>
 const useHandleChangeSelectInput = (setter, state) =>
   useCallback(
     (e, label, newValue, ligne) => {
-      console.log(ligne);
       const { id } = e.target;
       const shortLabel = id.split("__")[1];
 

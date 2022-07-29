@@ -10,8 +10,8 @@ function App() {
   // on crée l'etat de l'application au demarage
   const [state, setState] = useState({});
 
-  var userFromServer = window.user ?? user;
-  var indexCollectionFromServer = window.indexCollection ?? indexCollection;
+  var userFromServer = window.user;
+  var indexCollectionFromServer = window.indexCollection;
 
   useEffect(() => {
     if (!edit) {
@@ -38,6 +38,7 @@ function App() {
     findPartsOfForm(labelName, indexCollectionFromServer)
   );
 
+  console.log(state);
   return (
     <div className="App">
       <header className="App-header">

@@ -1,6 +1,8 @@
 export const findPartsOfForm = (labelName, indexes) => {
   return indexes.filter((element) => {
-    if (element.LABEL.includes(labelName)) return element;
+    if (element.LABEL.includes(labelName)) {
+      return element;
+    }
   });
 };
 export const getlabelList = (indexes) => {

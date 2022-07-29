@@ -9,7 +9,7 @@ import {
   Button,
   Container,
   Autocomplete,
-  Icon,
+  createFilterOptions,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -22,6 +22,7 @@ import {
   getDefaultProps,
 } from "../../utils/functions";
 import { modeleArticle } from "../datas";
+import Virtualize from "../AxeAnalytique/AxeAnalytique";
 const Form = ({ labels, datas, state, setState }) => {
   const [analytique, setAnalytique] = useState({});
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -39,7 +40,7 @@ const Form = ({ labels, datas, state, setState }) => {
   ////////////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////  Recuperation de l'analytique //////////////////////////////
-  const axiosCallGetAnalytique = useCallback(async () => {
+  const axiosCallGetAnalytique = async () => {
     let response = await axios({
       method: "GET",
       url: "https://armoires.zeendoc.com/ca_edeveloppement/_ClientSpecific/React_Form_DE/REST_API_ANALYTIQUE.php",
@@ -52,7 +53,8 @@ const Form = ({ labels, datas, state, setState }) => {
 
       setAnalytique([...newAnalytique]);
     }
-  }, [analytique]);
+  };
+
   //////////////////////////////// Envoi des données //////////////////////////////////
   /////
   const axiosCall = async () => {
@@ -90,7 +92,6 @@ const Form = ({ labels, datas, state, setState }) => {
 
   const handleChangeSelectInput = useCallback(
     (e, label, newValue, ligne) => {
-      console.log(ligne);
       const { id } = e.target;
       const shortLabel = id.split("__")[1];
 
@@ -183,7 +184,6 @@ const Form = ({ labels, datas, state, setState }) => {
       (sum, element) => sum + Number(element.montantHT),
       0
     );
-
     return amount;
   }, [state]);
   /////////////////////////////////////////////////////////////////////////////////////////
@@ -404,7 +404,7 @@ const Form = ({ labels, datas, state, setState }) => {
                                       })}
                                     </Select>
                                   </FormControl>
-
+                                  {/* 
                                   {Object.keys(analytique).length && (
                                     <FormControl>
                                       <Autocomplete
@@ -444,7 +444,17 @@ const Form = ({ labels, datas, state, setState }) => {
                                         }}
                                       />
                                     </FormControl>
-                                  )}
+                                  )} */}
+                                  <Virtualize
+                                    {...defaultPropsAnalytique}
+                                    state={state}
+                                    handleChangeSelectInput={
+                                      handleChangeSelectInput
+                                    }
+                                    index={index}
+                                    label={label}
+                                    shortLabel={shortLabel}
+                                  />
                                 </Stack>
 
                                 <Container
