@@ -41,9 +41,9 @@ export const initialStateConfigObject = {
     Exporté: { type: "text", value: "", hidden: true },
   },
   Validation: {
-    "Responsable N+1": { type: "text", value: "", hidden: true },
-    "Responsable N+2": { type: "text", value: "", hidden: true },
-    "Responsable N+3": { type: "text", value: "", hidden: true },
+    "Responsable N+1": { type: "text", value: "", hidden: false },
+    "Responsable N+2": { type: "text", value: "", hidden: false },
+    "Responsable N+3": { type: "text", value: "", hidden: false },
     "Montant du Budget HT": { type: "text", value: "" },
     "Je respecte le Budget": { type: "text", value: "", disabled: true },
     Commentaire: { type: "text", value: "" },

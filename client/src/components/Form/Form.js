@@ -397,7 +397,7 @@ const Form = ({ labels, datas, state, setState }) => {
                                           valeurs[valeur].split(" - ")[2]
                                         } - ${valeurs[valeur].split(" - ")[3]}`;
                                         return (
-                                          <MenuItem key={valeur} value={valeur}>
+                                          <MenuItem key={valeur} value={compte}>
                                             {compte}
                                           </MenuItem>
                                         );

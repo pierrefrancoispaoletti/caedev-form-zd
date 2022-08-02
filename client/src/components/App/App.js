@@ -7,11 +7,13 @@ import { initialStateConfigObject } from "../../config/configInitialState";
 let edit = false;
 
 function App() {
-  // on crée l'etat de l'application au demarage
   const [state, setState] = useState({});
 
   var userFromServer = window.user;
   var indexCollectionFromServer = window.indexCollection;
+  var Res_Id = window.Res_id;
+  var Coll_Id = window.Coll_Id;
+  var datasFromBD = window.datasFromBd;
 
   useEffect(() => {
     if (!edit) {
@@ -38,7 +40,6 @@ function App() {
     findPartsOfForm(labelName, indexCollectionFromServer)
   );
 
-  console.log(state);
   return (
     <div className="App">
       <header className="App-header">

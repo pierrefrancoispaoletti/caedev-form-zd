@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de demande d'engagement</title>
+</head>
+<style>
+
+    *{
+        box-sizing: border-box;
+    }
+
+
+    .header {
+        text-align: center;
+        position: relative;
+        background: #56812F;
+        font-size: 16px;
+        padding: 6px;
+        border-radius: 30px;
+        color: white;
+    }
+    .header__title { 
+        font-size: 1.5em;
+    }
+    .header__numero_engagement {
+        color: black;
+        display: inline_block;
+        position: absolute;
+        bottom: 12px;
+        right: 34px;
+        color: white;
+    }
+
+    .main {
+        border: 1px solid black;
+        margin: 12px 15%;
+        border-radius: 15px;
+        padding: 1em;
+    }
+
+    .main__section:not(:last-child){
+
+        border-bottom: 5px solid #55812F;
+    }
+
+    .main__section__title {
+        background: #1B9E90;
+        color: white;
+        font-size: 1.2em;
+        border-radius: 30px;
+        padding: 8px;
+    }
+
+    .main__section__content {
+        width: 100%;
+        padding: 8px 0;
+        vertical-align: baseline;
+        margin: 8px auto;
+    }
+
+    .main__section__content h3,h4{
+        width: 50%;
+        display: inline-block;
+        font-size: 1em;
+        margin: 2px 0;
+    }
+
+    .main__section__content span{
+        width: 49%;
+        display: inline-block;
+        text-align: right;
+        vertical-align: text-top;
+    }
+
+    .article {
+        border-top: 1px solid black;  
+    }
+
+    .article h4{
+        margin: 6px 0;
+    } 
+    .article:last-child {
+        border-bottom: 1px solid black; ;
+    }
+
+</style>
+
+
+<body>
+
+    <header class="header">
+        <h1 class="header__title">Demande d'engagement de frais</h1>
+        <span class="header__numero_engagement">DE-1234567890</span>
+    </header>
+    <main class="main">
+        <section class="main__section">
+            <h2 class="main__section__title">Formulaire</h2>
+            <div class="main__section__content">
+                <h3>Prescripteur : </h3>
+                <span>Pierre Paoletti</span>
+            </div>
+            <div class="main__section__content">
+                <h3>Nom de la demande : </h3>
+                <span>DE-123456789</span>
+            </div>
+            <div class="main__section__content">
+                <h3>Date de la demande : </h3>
+                <span>22/07/2022</span>
+            </div>
+            <div class="main__section__content">
+                <h3>Description detaillée : </h3>
+                <span>description détaillee</span>
+            </div>
+            <div class="main__section__content">
+                <h3>Adresse de livraison : </h3>
+                <span>ECADEV</span>
+            </div>
+        </section>
+        <section class="main__section">
+            <h2 class="main__section__title">Périodicité</h2>
+            <div class="main__section__content">
+                <h3>Date de Début : </h3>
+                <span>22/07/2022</span>
+            </div>
+            <div class="main__section__content">
+                <h3>Date de Fin : </h3>
+                <span>22/07/2022</span>
+            </div>
+        </section>
+        <section class="main__section">
+            <h2 class="main__section__title">Comptabilité</h2>
+            <div class="main__section__content" >
+                <h3>Fournisseurs : </h3>
+                <span>MERCIS tirelipimpon....</span>
+            </div>
+            <div>
+                <!-- on bouclera sur les articles pour en extraitre les données -->
+                <div class="main__section__content article">
+                    <h4>Nom Article : </h4>
+                    <span>ici nom article</span>
+                    <h4>Montant HT :  </h4>
+                    <span>100<em>€</em></span>
+                    <h4>Compte Comptable : </h4>
+                    <span>ici compte comptable</span>
+                    <h4>Axe Analytique : </h4>
+                    <span>ici axe analytique</span>
+                </div>
+                <div class="main__section__content article">
+                    <h4>Nom Article : </h4>
+                    <span>ici nom article</span>
+                    <h4>Montant HT :  </h4>
+                    <span>100<em>€</em></span>
+                    <h4>Compte Comptable : </h4>
+                    <span>ici compte comptable</span>
+                    <h4>Axe Analytique : </h4>
+                    <span>ici axe analytique</span>
+                </div>
+                <div class="main__section__content article">
+                    <h4>Nom Article : </h4>
+                    <span>ici nom article</span>
+                    <h4>Montant HT :  </h4>
+                    <span>100<em>€</em></span>
+                    <h4>Compte Comptable : </h4>
+                    <span>ici compte comptable</span>
+                    <h4>Axe Analytique : </h4>
+                    <span>ici axe analytique</span>
+                </div>
+                <div class="main__section__content article">
+                    <h4>Nom Article : </h4>
+                    <span>ici nom article</span>
+                    <h4>Montant HT :  </h4>
+                    <span>100<em>€</em></span>
+                    <h4>Compte Comptable : </h4>
+                    <span>ici compte comptable</span>
+                    <h4>Axe Analytique : </h4>
+                    <span>ici axe analytique</span>
+                </div>
+            </div>
+            <div class="main__section__content">
+                <h3>Total Articles Prestations HT : </h3>
+                <span>100<em>€</em></span>
+            </div>
+            <div class="main__section__content">
+                <h3>Mode de facturation  : </h3>
+                <span>30JFDM</span>
+            </div>
+        </section>
+        <section class="main__section">
+            <h2 class="main__section__title">Validation</h2>
+            <div class="main__section__content">
+                <h3>Responsable N+1 : </h3>
+                <span>Nom du responsable N+1</span>
+            </div>
+            <div class="main__section__content">
+                <h3>Responsable N+2 : </h3>
+                <span>Nom du responsable N+2</span>
+            </div>
+            <div class="main__section__content">
+                <h3>Responsable N+3 : </h3>
+                <span>Nom du responsable N+3</span>
+            </div>
+            <div class="main__section__content">
+                <h3>Montant du budget HT : </h3>
+                <span>500<em>€</em></span>
+            </div>
+            <div class="main__section__content">
+                <h3>Je respecte le budget : </h3>
+                <span>Oui</span>
+            </div>
+            <div class="main__section__content">
+                <h3>Commentaire : </h3>
+                <span>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Fuga architecto, nobis odio incidunt laboriosam eos adipisci culpa hic expedita? Ullam.</span>
+            </div>
+
+        </section>
+    </main>
+    <footer>
+
+    </footer>
+
+</body>
+</html>
