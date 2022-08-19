@@ -130,10 +130,11 @@ export default function Virtualize({
   index,
   label,
   shortLabel,
+  required,
   ...analytique
 }) {
   return (
-    <FormControl>
+    <FormControl required={required}>
       <Autocomplete
         className={autocompleteClasses.autocomplete}
         fullWidth
@@ -149,6 +150,7 @@ export default function Virtualize({
         }
         renderInput={(params) => (
           <TextField
+            required={required}
             sx={{ fontSize: "12px" }}
             error={state?.[label]?.[shortLabel]?.error ?? false}
             {...params}

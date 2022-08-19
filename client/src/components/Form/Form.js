@@ -9,7 +9,6 @@ import {
   Button,
   Container,
   Autocomplete,
-  createFilterOptions,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -248,12 +247,19 @@ const Form = ({ labels, datas, state, setState }) => {
               {label}
             </h2>
             {currentData.map((data) => {
-              const {
+              let {
                 SHORT_LABEL: shortLabel,
                 VALEURS: valeurs,
                 COLUMN: column,
                 TYPE: type,
+                MANDATORY: required,
               } = data;
+
+              if (required) {
+                required = true;
+              } else {
+                required = false;
+              }
 
               const newValeurs = convertObjectToArrayOfObject(valeurs);
 
@@ -267,6 +273,7 @@ const Form = ({ labels, datas, state, setState }) => {
               return (
                 <FormControl
                   key={label + "-" + shortLabel}
+                  required={required}
                   sx={{
                     display: state?.[label]?.[shortLabel]?.hidden ? "none" : "",
                   }}
@@ -295,6 +302,7 @@ const Form = ({ labels, datas, state, setState }) => {
                               {...params}
                               label={shortLabel}
                               variant="filled"
+                              required={required}
                               size="small"
                             />
                           );
@@ -308,6 +316,7 @@ const Form = ({ labels, datas, state, setState }) => {
                       id={column}
                       name={shortLabel}
                       label={shortLabel}
+                      required={required}
                       inputProps={
                         state?.[label]?.[shortLabel]?.type === "date"
                           ? {
@@ -337,7 +346,7 @@ const Form = ({ labels, datas, state, setState }) => {
                             (element, index) => (
                               <Container key={index}>
                                 <Stack spacing={2}>
-                                  <FormControl fullWidth>
+                                  <FormControl fullWidth required={required}>
                                     <InputLabel id="nom_article_ventilation">
                                       Nom de l'article
                                     </InputLabel>
@@ -364,11 +373,12 @@ const Form = ({ labels, datas, state, setState }) => {
                                       })}
                                     </Select>
                                   </FormControl>
-                                  <FormControl fullWidth>
+                                  <FormControl fullWidth required={required}>
                                     <TextField
                                       name="montantHT"
                                       id="montant_ht_ventilation"
                                       label="Montant HT"
+                                      required={required}
                                       value={
                                         state["Comptabilité"]["Articles"][
                                           index
@@ -377,7 +387,7 @@ const Form = ({ labels, datas, state, setState }) => {
                                       onChange={handleChangeArticle(index)}
                                     />
                                   </FormControl>
-                                  <FormControl fullWidth>
+                                  <FormControl fullWidth required={required}>
                                     <InputLabel id="compte_comptable_TVA">
                                       Compte comptable
                                     </InputLabel>
@@ -454,6 +464,7 @@ const Form = ({ labels, datas, state, setState }) => {
                                     index={index}
                                     label={label}
                                     shortLabel={shortLabel}
+                                    required={required}
                                   />
                                 </Stack>
 

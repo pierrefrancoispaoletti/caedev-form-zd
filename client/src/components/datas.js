@@ -88,7 +88,7 @@ export const indexCollection = [
     COLL_ID: "coll_12",
     AUTOCOMPLETE: null,
     SHOW_IN_RESULTLIST: 1,
-    MANDATORY: 1,
+    MANDATORY: 0,
     MULTIVALUED: null,
     EXCLU_LAD: null,
     FIXED_VALUES_TABLE: null,

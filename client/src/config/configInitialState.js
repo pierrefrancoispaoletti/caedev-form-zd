@@ -23,11 +23,19 @@ export const initialStateConfigObject = {
       disabled: true,
     },
     "Description détaillée": { type: "text", value: "" },
-    "Adresse de livraison": { type: "text", value: "" },
+    "Adresse de livraison": { type: "text", value: "", required: true },
   },
   Périodicité: {
-    "Date de Début": { type: "date", value: setDayDate(), min: setDayDate() },
-    "Date de Fin": { type: "date", value: setDayDate(), min: setDayDate() },
+    "Date de Début": {
+      type: "date",
+      value: setDayDate(),
+      min: setDayDate(),
+    },
+    "Date de Fin": {
+      type: "date",
+      value: setDayDate(),
+      min: setDayDate(),
+    },
   },
   Comptabilité: {
     Fournisseurs: { type: "text", value: "" },
@@ -37,14 +45,30 @@ export const initialStateConfigObject = {
       value: "",
       disabled: true,
     },
-    "Mode de facturation": { type: "text", value: "", hidden: true },
+    "Mode de facturation": {
+      type: "text",
+      value: "",
+      hidden: false,
+    },
     Exporté: { type: "text", value: "", hidden: true },
   },
   Validation: {
-    "Responsable N+1": { type: "text", value: "", hidden: false },
-    "Responsable N+2": { type: "text", value: "", hidden: false },
-    "Responsable N+3": { type: "text", value: "", hidden: false },
-    "Montant du Budget HT": { type: "text", value: "" },
+    "Responsable N+1": {
+      type: "text",
+      value: "",
+      hidden: false,
+    },
+    "Responsable N+2": {
+      type: "text",
+      value: "",
+      hidden: false,
+    },
+    "Responsable N+3": {
+      type: "text",
+      value: "",
+      hidden: false,
+    },
+    "Montant du Budget HT": { type: "text", value: "", required: true },
     "Je respecte le Budget": { type: "text", value: "", disabled: true },
     Commentaire: { type: "text", value: "" },
   },
