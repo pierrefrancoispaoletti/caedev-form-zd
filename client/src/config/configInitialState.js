@@ -16,7 +16,7 @@ export const initialStateConfigObject = {
       value: "",
       disabled: true,
     },
-    "Nom de la demande": { type: "text", value: "", hidden: true },
+    "Nom de la demande": { type: "text", value: "", hidden: false },
     "Date de la demande": {
       type: "date",
       value: setDayDate(),
@@ -71,9 +71,5 @@ export const initialStateConfigObject = {
     "Montant du Budget HT": { type: "text", value: "", required: true },
     "Je respecte le Budget": { type: "text", value: "", disabled: true },
     Commentaire: { type: "text", value: "" },
-  },
-  "Refusé par :": {
-    hidden: true,
-    "Refusé par :": { type: "text", value: "", hidden: true },
   },
 };

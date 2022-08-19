@@ -362,9 +362,7 @@ const Form = ({ labels, datas, state, setState }) => {
                                       onChange={handleChangeArticle(index)}
                                     >
                                       {Object.keys(valeurs).map((valeur) => {
-                                        const article = `${
-                                          valeurs[valeur].split(" - ")[0]
-                                        } - ${valeurs[valeur].split(" - ")[1]}`;
+                                        const article = `${valeurs[valeur]}`;
                                         return (
                                           <MenuItem key={valeur} value={valeur}>
                                             {article}
@@ -392,26 +390,41 @@ const Form = ({ labels, datas, state, setState }) => {
                                       Compte comptable
                                     </InputLabel>
                                     <Select
-                                      name="compteComptableTVA"
+                                      name="nomArticleVentilation"
                                       labelId="compte_comptable_TVA"
                                       label="Compte comptable"
                                       value={
                                         state["Comptabilité"]["Articles"][
                                           index
-                                        ]["compteComptableTVA"]
+                                        ]["nomArticleVentilation"]
                                       }
-                                      onChange={handleChangeArticle(index)}
                                     >
-                                      {Object.keys(valeurs).map((valeur) => {
-                                        const compte = `${
-                                          valeurs[valeur].split(" - ")[2]
-                                        } - ${valeurs[valeur].split(" - ")[3]}`;
-                                        return (
-                                          <MenuItem key={valeur} value={compte}>
-                                            {compte}
-                                          </MenuItem>
-                                        );
-                                      })}
+                                      <MenuItem
+                                        key={
+                                          state["Comptabilité"]["Articles"][
+                                            index
+                                          ]["nomArticleVentilation"]
+                                        }
+                                        value={
+                                          state["Comptabilité"]["Articles"][
+                                            index
+                                          ]["nomArticleVentilation"]
+                                        }
+                                      >
+                                        {`${
+                                          valeurs?.[
+                                            state["Comptabilité"]["Articles"][
+                                              index
+                                            ]["nomArticleVentilation"]
+                                          ]?.split(" - ")[2]
+                                        } - ${
+                                          valeurs?.[
+                                            state["Comptabilité"]["Articles"][
+                                              index
+                                            ]["nomArticleVentilation"]
+                                          ]?.split(" - ")[3]
+                                        }`}
+                                      </MenuItem>
                                     </Select>
                                   </FormControl>
                                   {/* 

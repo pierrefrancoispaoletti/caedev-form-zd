@@ -1,13 +1,14 @@
 {
   "files": {
-    "main.css": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react/static/css/main.2304cabf.css",
-    "main.js": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react/static/js/main.0ab65513.js",
+    "main.css": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react/static/css/main.9e69ba3a.css",
+    "main.js": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react/static/js/main.69c0e08c.js",
+    "static/media/logo.PNG": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react/static/media/logo.6135d8ff6cd7e28214eb.PNG",
     "index.html": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react/index.html",
-    "main.2304cabf.css.map": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react/static/css/main.2304cabf.css.map",
-    "main.0ab65513.js.map": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react/static/js/main.0ab65513.js.map"
+    "main.9e69ba3a.css.map": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react/static/css/main.9e69ba3a.css.map",
+    "main.69c0e08c.js.map": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react/static/js/main.69c0e08c.js.map"
   },
   "entrypoints": [
-    "static/css/main.2304cabf.css",
-    "static/js/main.0ab65513.js"
+    "static/css/main.9e69ba3a.css",
+    "static/js/main.69c0e08c.js"
   ]
 }
