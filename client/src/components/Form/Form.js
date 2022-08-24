@@ -9,21 +9,32 @@ import {
   Button,
   Container,
   Autocomplete,
+  Snackbar,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
 
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   convertObjectToArrayOfObject,
   getDefaultProps,
 } from "../../utils/functions";
 import { modeleArticle } from "../datas";
 import Virtualize from "../AxeAnalytique/AxeAnalytique";
+import { initialStateConfigObject } from "../../config/configInitialState";
+
+import MuiAlert from "@mui/material/Alert";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 const Form = ({ labels, datas, state, setState }) => {
   const [analytique, setAnalytique] = useState({});
+  const [message, setMessage] = useState({});
+
   ////////////////////////////////////////////////////////////////////////////////////////
   /////////////// Au chargement de l'application, j'ajoute un article et je vais chercher l'analytique ///////////////////////////////////////////////////////////////////////////
   useEffect(() => {
@@ -62,6 +73,26 @@ const Form = ({ labels, datas, state, setState }) => {
       url: "traitement.php",
       data: state,
     });
+
+    if (response.data.status === "OK") {
+      setMessage({
+        message: "Votre demande à été soumise avec succés",
+        status: "success",
+      });
+      setTimeout(() => {
+        setMessage({});
+      }, 7000);
+      setState({ ...initialStateConfigObject });
+    } else {
+      setMessage({
+        message:
+          "il y à eu une erreur lors de la soumission de votre formulaire",
+        status: "error",
+      });
+      setTimeout(() => {
+        setMessage("");
+      }, 7000);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -224,12 +255,36 @@ const Form = ({ labels, datas, state, setState }) => {
     checkBudget(budgetTotal, montantTotalArticles);
   }, [budgetTotal, montantTotalArticles]);
 
+  const handleCloseAlertMessage = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setMessage({});
+  };
+
   return (
     <Box
       component="form"
       sx={{ border: "1px solid black", padding: "1.3em", margin: "5% 15%" }}
       onSubmit={handleSubmit}
     >
+      {Object.keys(message).length > 0 && (
+        <Snackbar
+          open={Object.keys(message).length > 0 ? true : false}
+          autoHideDuration={6000}
+          onClose={handleCloseAlertMessage}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseAlertMessage}
+            severity={message.status}
+            sx={{ width: "100%" }}
+          >
+            {message.message}
+          </Alert>
+        </Snackbar>
+      )}
       {labels.map((label, index) => {
         const currentData = datas[index];
         return (
@@ -300,7 +355,10 @@ const Form = ({ labels, datas, state, setState }) => {
                                 state?.[label]?.[shortLabel]?.error ?? false
                               }
                               {...params}
-                              label={shortLabel}
+                              label={
+                                state?.[label]?.[shortLabel]?.label ??
+                                shortLabel
+                              }
                               variant="filled"
                               required={required}
                               size="small"
@@ -315,7 +373,7 @@ const Form = ({ labels, datas, state, setState }) => {
                       type={state?.[label]?.[shortLabel]?.type}
                       id={column}
                       name={shortLabel}
-                      label={shortLabel}
+                      label={state?.[label]?.[shortLabel]?.label ?? shortLabel}
                       required={required}
                       inputProps={
                         state?.[label]?.[shortLabel]?.type === "date"
@@ -348,12 +406,12 @@ const Form = ({ labels, datas, state, setState }) => {
                                 <Stack spacing={2}>
                                   <FormControl fullWidth required={required}>
                                     <InputLabel id="nom_article_ventilation">
-                                      Nom de l'article
+                                      Nom de l'article / Prestation
                                     </InputLabel>
                                     <Select
                                       name="nomArticleVentilation"
                                       labelId="nom_article_ventilation"
-                                      label="Nom de l'article"
+                                      label="Nom de l'article / Prestation"
                                       value={
                                         state["Comptabilité"]["Articles"][
                                           index
@@ -390,6 +448,7 @@ const Form = ({ labels, datas, state, setState }) => {
                                       Compte comptable
                                     </InputLabel>
                                     <Select
+                                      disabled
                                       name="nomArticleVentilation"
                                       labelId="compte_comptable_TVA"
                                       label="Compte comptable"
