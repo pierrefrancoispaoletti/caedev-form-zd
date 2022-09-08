@@ -22,10 +22,10 @@ import {
   getDefaultProps,
 } from "../../utils/functions";
 import { modeleArticle } from "../datas";
-import Virtualize from "../AxeAnalytique/AxeAnalytique";
 import { initialStateConfigObject } from "../../config/configInitialState";
 
 import MuiAlert from "@mui/material/Alert";
+import { analytiqueDev } from "./analytique";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -56,8 +56,16 @@ const Form = ({ labels, datas, state, setState }) => {
       url: "https://armoires.zeendoc.com/ca_edeveloppement/_ClientSpecific/React_Form_DE/REST_API_ANALYTIQUE.php",
     });
 
-    if (response.status === 200 && Object.keys(analytique).length === 0) {
-      let parsedDatas = JSON.parse(response.data.analytique)[0];
+    if (process.env.NODE_ENV === "production") {
+      if (response.status === 200 && Object.keys(analytique).length === 0) {
+        let parsedDatas = JSON.parse(response.data.analytique)[0];
+
+        let newAnalytique = convertObjectToArrayOfObject(parsedDatas.VALEURS);
+
+        setAnalytique([...newAnalytique]);
+      }
+    } else {
+      let parsedDatas = JSON.parse(analytiqueDev.analytique)[0];
 
       let newAnalytique = convertObjectToArrayOfObject(parsedDatas.VALEURS);
 
@@ -529,17 +537,45 @@ const Form = ({ labels, datas, state, setState }) => {
                                       </MenuItem>
                                     </Select>
                                   </FormControl>
-                                  <Virtualize
-                                    {...defaultPropsAnalytique}
-                                    state={state}
-                                    handleChangeSelectInput={
-                                      handleChangeSelectInput
-                                    }
-                                    index={index}
-                                    label={label}
-                                    shortLabel={shortLabel}
-                                    required={required}
-                                  />
+                                  {Object.keys(analytique).length > 0 && (
+                                    <FormControl required={required}>
+                                      <Autocomplete
+                                        {...defaultPropsAnalytique}
+                                        fullWidth
+                                        id={`${"custom_n1"}__${"axeAnalytique"}__`}
+                                        value={
+                                          state["Comptabilité"]["Articles"][
+                                            index
+                                          ]["axeAnalytique"]?.value ?? ""
+                                        }
+                                        onChange={(e, newValue) =>
+                                          handleChangeSelectInput(
+                                            e,
+                                            label,
+                                            newValue,
+                                            index
+                                          )
+                                        }
+                                        disablePortal
+                                        disableClearable
+                                        autoComplete
+                                        renderInput={(params) => (
+                                          <TextField
+                                            required={required}
+                                            sx={{ fontSize: "12px" }}
+                                            error={
+                                              state?.[label]?.[shortLabel]
+                                                ?.error ?? false
+                                            }
+                                            {...params}
+                                            label="Axe Analytique"
+                                            variant="filled"
+                                            size="small"
+                                          />
+                                        )}
+                                      />
+                                    </FormControl>
+                                  )}
                                 </Stack>
 
                                 <Container
