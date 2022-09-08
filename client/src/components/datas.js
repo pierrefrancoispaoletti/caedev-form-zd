@@ -3422,6 +3422,7 @@ export const user = {
 
 export const modeleArticle = {
   compteComptableTVA: "",
+  commentaire: "",
   montantHT: "",
   nomArticleVentilation: "",
   axeAnalytique: { value: "" },

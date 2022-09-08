@@ -5,16 +5,26 @@ body {
 code {
   font-family: 'Open Sans', sans-serif;
 }
-
+.App {
+  width: 80%;
+  margin: auto;
+  font-size : 0.8rem;
+}
 .App-header {
+  font-size: 0.6rem;
   position: relative;
   background:#57812F ;
   color: white;
-  width: 80%;
+  width: 65%;
   display: flex;
   text-align: center;
   justify-content: center;
   align-items: center;
-  margin: 22px auto;
+  margin: 8px auto;
   border-radius: 30px;
+}
+
+.App-title {
+  margin: 0;
+  padding: 8px;
 }

@@ -85,11 +85,10 @@ function App() {
           marginBottom: "12px",
         }}
       >
-        <img width="40%" src={logo} alt="logo Credit agricole developpement" />
+        <img width="30%" src={logo} alt="logo Credit agricole developpement" />
       </div>
       <header className="App-header">
-        <h1 className="App-title">Formulaire de demande d'engagement</h1>
-        <div className="App-decorator"></div>
+        <h1 className="App-title">Demande d'engagement de dépenses</h1>
       </header>
       {Object.keys(state).length && (
         <Form

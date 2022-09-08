@@ -64,7 +64,6 @@ const Form = ({ labels, datas, state, setState }) => {
       setAnalytique([...newAnalytique]);
     }
   };
-
   //////////////////////////////// Envoi des données //////////////////////////////////
   /////
   const axiosCall = async () => {
@@ -266,7 +265,11 @@ const Form = ({ labels, datas, state, setState }) => {
   return (
     <Box
       component="form"
-      sx={{ border: "1px solid black", padding: "1.3em", margin: "5% 15%" }}
+      sx={{
+        border: "1px solid black",
+        padding: "1em",
+        margin: "2% 15%",
+      }}
       onSubmit={handleSubmit}
     >
       {Object.keys(message).length > 0 && (
@@ -294,9 +297,12 @@ const Form = ({ labels, datas, state, setState }) => {
                 display: state?.[label]?.hidden ? "none" : "",
                 backgroundColor: "#1D9E90",
                 padding: "12px",
-                height: "",
                 color: "white",
                 borderRadius: "30px",
+                margin: "12px 0 12px",
+                fontSize: "1.2em",
+                textTransform: "uppercase",
+                fontWeight: "700",
               }}
             >
               {label}
@@ -327,10 +333,12 @@ const Form = ({ labels, datas, state, setState }) => {
 
               return (
                 <FormControl
+                  size="small"
                   key={label + "-" + shortLabel}
                   required={required}
                   sx={{
                     display: state?.[label]?.[shortLabel]?.hidden ? "none" : "",
+                    marginTop: "12px !important",
                   }}
                 >
                   {valeurs &&
@@ -344,7 +352,9 @@ const Form = ({ labels, datas, state, setState }) => {
                         onChange={(e, newValue) =>
                           handleChangeSelectInput(e, label, newValue)
                         }
+                        disablePortal
                         disableClearable
+                        autoComplete
                         disabled={
                           state?.[label]?.[shortLabel]?.disabled ?? false
                         }
@@ -369,6 +379,7 @@ const Form = ({ labels, datas, state, setState }) => {
                     </>
                   ) : type !== "VENTILATION_HT" ? (
                     <TextField
+                      size="small"
                       disabled={state?.[label]?.[shortLabel]?.disabled ?? false}
                       type={state?.[label]?.[shortLabel]?.type}
                       id={column}
@@ -404,7 +415,11 @@ const Form = ({ labels, datas, state, setState }) => {
                             (element, index) => (
                               <Container key={index}>
                                 <Stack spacing={2}>
-                                  <FormControl fullWidth required={required}>
+                                  <FormControl
+                                    size="small"
+                                    fullWidth
+                                    required={required}
+                                  >
                                     <InputLabel id="nom_article_ventilation">
                                       Nom de l'article / Prestation
                                     </InputLabel>
@@ -429,8 +444,31 @@ const Form = ({ labels, datas, state, setState }) => {
                                       })}
                                     </Select>
                                   </FormControl>
-                                  <FormControl fullWidth required={required}>
+                                  <FormControl
+                                    size="small"
+                                    fullWidth
+                                    required={required}
+                                  >
                                     <TextField
+                                      size="small"
+                                      name="commentaire"
+                                      id="commentaire_article"
+                                      label="Commentaire"
+                                      value={
+                                        state["Comptabilité"]["Articles"][
+                                          index
+                                        ]["commentaire"]
+                                      }
+                                      onChange={handleChangeArticle(index)}
+                                    />
+                                  </FormControl>
+                                  <FormControl
+                                    size="small"
+                                    fullWidth
+                                    required={required}
+                                  >
+                                    <TextField
+                                      size="small"
                                       name="montantHT"
                                       id="montant_ht_ventilation"
                                       label="Montant HT"
@@ -443,11 +481,16 @@ const Form = ({ labels, datas, state, setState }) => {
                                       onChange={handleChangeArticle(index)}
                                     />
                                   </FormControl>
-                                  <FormControl fullWidth required={required}>
+                                  <FormControl
+                                    size="small"
+                                    fullWidth
+                                    required={required}
+                                  >
                                     <InputLabel id="compte_comptable_TVA">
                                       Compte comptable
                                     </InputLabel>
                                     <Select
+                                      size="small"
                                       disabled
                                       name="nomArticleVentilation"
                                       labelId="compte_comptable_TVA"
@@ -486,47 +529,6 @@ const Form = ({ labels, datas, state, setState }) => {
                                       </MenuItem>
                                     </Select>
                                   </FormControl>
-                                  {/* 
-                                  {Object.keys(analytique).length && (
-                                    <FormControl>
-                                      <Autocomplete
-                                        {...defaultPropsAnalytique}
-                                        id={`${"custom_n1"}__${"axeAnalytique"}__`}
-                                        value={
-                                          state["Comptabilité"]["Articles"][
-                                            index
-                                          ]["axeAnalytique"]?.value ?? ""
-                                        }
-                                        onChange={(e, newValue) =>
-                                          handleChangeSelectInput(
-                                            e,
-                                            label,
-                                            newValue,
-                                            index
-                                          )
-                                        }
-                                        disableClearable
-                                        disabled={
-                                          state?.[label]?.[shortLabel]
-                                            ?.disabled ?? false
-                                        }
-                                        renderInput={(params) => {
-                                          return (
-                                            <TextField
-                                              error={
-                                                state?.[label]?.[shortLabel]
-                                                  ?.error ?? false
-                                              }
-                                              {...params}
-                                              label="Axe Analytique"
-                                              variant="filled"
-                                              size="small"
-                                            />
-                                          );
-                                        }}
-                                      />
-                                    </FormControl>
-                                  )} */}
                                   <Virtualize
                                     {...defaultPropsAnalytique}
                                     state={state}
@@ -563,7 +565,11 @@ const Form = ({ labels, datas, state, setState }) => {
                             )
                           )}
                         <Container
-                          sx={{ display: "flex", justifyContent: "center" }}
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            marginTop: "8px !important",
+                          }}
                         >
                           <Button
                             variant="contained"
