@@ -75,18 +75,6 @@ export const initialStateConfigObject = {
       hidden: false,
       label: "Responsable N+1",
     },
-    "Responsable N+2": {
-      type: "text",
-      value: "",
-      hidden: false,
-      label: "Responsable N+2",
-    },
-    "Responsable N+3": {
-      type: "text",
-      value: "",
-      hidden: false,
-      label: "Responsable N+3",
-    },
     "Montant du Budget HT": {
       type: "text",
       value: "",

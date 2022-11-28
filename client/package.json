@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "homepage": "/ca_edeveloppement/_ClientSpecific/React_Form_DE/react",
+  "homepage": "/ca_edeveloppement/_ClientSpecific/React_Form_DP_DE/react",
   "proxy": "http://localhost:5000",
   "version": "0.1.0",
   "private": true,
