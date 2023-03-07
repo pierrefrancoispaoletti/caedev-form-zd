@@ -1,7 +1,7 @@
 {
   "name": "client",
-  "homepage": "/ca_edeveloppement/_ClientSpecific/React_Form_DP_DE/react",
-  "proxy": "http://localhost:5000",
+  "homepage": "/apogees/_ClientSpecific/React_Form_DE/react",
+  "proxy": "http://localhost:8080/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

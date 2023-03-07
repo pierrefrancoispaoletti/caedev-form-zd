@@ -3,90 +3,74 @@ const setDayDate = () => {
 };
 // on initialise ici toutes les valeurs de depart de l'objet qui va dezterminer le state
 export const initialStateConfigObject = {
-  "Type de document": {
-    hidden: true,
-    "Type de document": {
-      hidden: true,
-      value: "",
-      label: "Type de document",
-    },
-  },
-  Formulaire: {
-    Prescripteurs: {
+  "Demande d'engagement": {
+    "Demandée par": {
       type: "text",
       value: "",
       disabled: true,
-      label: "Prescripteurs (demandeur)",
+      label: "Demandée par",
     },
-    "Nom de la demande": { type: "text", value: "", hidden: false },
+    Objet: { type: "text", value: "", hidden: false },
     "Date de la demande": {
       type: "date",
       value: setDayDate(),
       disabled: true,
       label: "Date de la demande",
     },
-    "Description détaillée": {
+    "DESTINATION ou OBJECTIF de la dépense": {
       type: "text",
       value: "",
-      label: "Description détaillée",
+      label: "DESTINATION ou OBJECTIF de la dépense",
     },
-    "Adresse de livraison": {
+    "PROJET CONCERNE (nom du projet)": {
       type: "text",
       value: "",
-      required: true,
-      label: "Adresse de livraison crédit agricole",
+      label: "PROJET CONCERNE (nom du projet)",
     },
-  },
-  Périodicité: {
-    "Date de Début": {
+    "DESCRIPTION DETAILLEE (critères techniques principaux)": {
+      type: "text",
+      value: "",
+      label: "DESCRIPTION DETAILLEE (critères techniques principaux)",
+    },
+    "NOM DES FOURNISSEURS CONSULTES (joindre tous les devis)": {
+      type: "text",
+      value: "",
+      label: "NOM DES FOURNISSEURS CONSULTES (joindre tous les devis)",
+    },
+    "FOURNISSEUR SELECTIONNE": {
+      type: "text",
+      value: "",
+      label: "FOURNISSEUR SELECTIONNE",
+    },
+    "REFERENCE DU DEVIS SELECTIONNE": {
+      type: "text",
+      value: "",
+      label: "REFERENCE DU DEVIS SELECTIONNE",
+    },
+    "DATE DU DEVIS SELECTIONNE": {
       type: "date",
       value: setDayDate(),
       min: setDayDate(),
-      label: "Date de début (incluse)",
+      label: "DATE DU DEVIS SELECTIONNE",
     },
-    "Date de Fin": {
-      type: "date",
-      value: setDayDate(),
-      min: setDayDate(),
-      label: "Date de fin (incluse)",
+    "Type de demande d'achat": {
+      type: "text",
+      value: "",
+      label: "Type de demande d'achat",
     },
   },
-  Comptabilité: {
-    Fournisseurs: { type: "text", value: "", label: "Fournisseur" },
-    Articles: [],
-    "Total Articles Prestations HT": {
-      type: "text",
+  "Informations Générales": {
+    "Montant HT": {
+      type: "number",
       value: "",
-      disabled: true,
-      label: "Total Articles/Prestations HT",
+      min: 0,
+      label: "Montant HT",
     },
-    "Mode de facturation": {
-      type: "text",
+    "Frais de port": {
+      type: "number",
       value: "",
-      hidden: false,
-      label: "Mode de facturation",
+      min: 0,
+      label: "Frais de port",
     },
-    Exporté: { type: "text", value: "", hidden: true },
-  },
-  Validation: {
-    "Responsable N+1": {
-      type: "text",
-      value: "",
-      hidden: false,
-      label: "Responsable N+1",
-    },
-    "Montant du Budget HT": {
-      type: "text",
-      value: "",
-      required: true,
-      label: "Montant du budget HT",
-    },
-    "Je respecte le Budget": {
-      type: "text",
-      value: "",
-      disabled: true,
-      label: "Je respecte le budget",
-    },
-    Commentaire: { type: "text", value: "", label: "Commentaire" },
   },
 };

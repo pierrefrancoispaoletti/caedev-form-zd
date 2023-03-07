@@ -6,11 +6,13 @@ import { initialStateConfigObject } from "../../config/configInitialState";
 import logo from "./logo.PNG";
 let edit = false;
 
+var userFromServer = window.user ?? user;
+var indexCollectionFromServer = window.indexCollection ?? indexCollection;
+
+var dest = window.dest ?? "coll_2";
+
 function App() {
   const [state, setState] = useState({});
-
-  var userFromServer = window.user ?? user;
-  var indexCollectionFromServer = window.indexCollection ?? indexCollection;
   // var Res_Id = window.Res_id;
   // var Coll_Id = window.Coll_Id;
   // var datasFromBD = window.datasFromBd;
@@ -52,26 +54,10 @@ function App() {
       let initialState = { ...initialStateConfigObject };
       const userId = userFromServer.User_Id;
       const userFullName = `${userFromServer.FirstName} ${userFromServer.LastName}`;
-      initialState.Formulaire.Prescripteurs.value = {
+      initialState["Demande d'engagement"]["Demandée par"].value = {
         id: userId,
         label: userFullName.trim(),
       };
-
-      initialState = setInitialValue(
-        initialState,
-        formDatas,
-        "Type de document",
-        "Type de document",
-        1
-      );
-
-      initialState = setInitialValue(
-        initialState,
-        formDatas,
-        "Comptabilité",
-        "Mode de facturation",
-        1
-      );
       setState({ ...initialState });
     }
   }, []);
@@ -85,7 +71,7 @@ function App() {
           marginBottom: "12px",
         }}
       >
-        <img width="30%" src={logo} alt="logo Credit agricole developpement" />
+        <img width="30%" src={logo} alt="logo Apogées" />
       </div>
       <header className="App-header">
         <h1 className="App-title">Demande d'engagement de dépenses</h1>
@@ -96,6 +82,7 @@ function App() {
           datas={formDatas}
           state={state}
           setState={setState}
+          dest={dest}
         />
       )}
     </div>

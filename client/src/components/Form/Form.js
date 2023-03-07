@@ -2,83 +2,49 @@ import {
   Box,
   FormControl,
   TextField,
-  Select,
-  InputLabel,
-  MenuItem,
   Stack,
   Button,
   Container,
   Autocomplete,
   Snackbar,
+  Divider,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
-
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  convertObjectToArrayOfObject,
-  getDefaultProps,
-} from "../../utils/functions";
-import { modeleArticle } from "../datas";
+import React, { useCallback, useState } from "react";
+import { convertObjectToArrayOfObject } from "../../utils/functions";
 import { initialStateConfigObject } from "../../config/configInitialState";
 
 import MuiAlert from "@mui/material/Alert";
-import { analytiqueDev } from "./analytique";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const Form = ({ labels, datas, state, setState }) => {
-  const [analytique, setAnalytique] = useState({});
+const Form = ({ labels, datas, state, setState, dest }) => {
   const [message, setMessage] = useState({});
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
-  ////////////////////////////////////////////////////////////////////////////////////////
-  /////////////// Au chargement de l'application, j'ajoute un article et je vais chercher l'analytique ///////////////////////////////////////////////////////////////////////////
-  useEffect(() => {
-    if (
-      Object.keys(state).length > 0 &&
-      state["Comptabilité"]["Articles"].length === 0
-    ) {
-      handleAddArticle();
-    }
-    axiosCallGetAnalytique();
-  }, []);
-
-  ////////////////////////////////////////////////////////////////////////////////////////
-
-  ////////////////////////////////  Recuperation de l'analytique //////////////////////////////
-  const axiosCallGetAnalytique = async () => {
-    let response = await axios({
-      method: "GET",
-      url: "https://armoires.zeendoc.com/ca_edeveloppement/_ClientSpecific/React_Form_DE/REST_API_ANALYTIQUE.php",
-    });
-
-    if (process.env.NODE_ENV === "production") {
-      if (response.status === 200 && Object.keys(analytique).length === 0) {
-        let parsedDatas = JSON.parse(response.data.analytique)[0];
-
-        let newAnalytique = convertObjectToArrayOfObject(parsedDatas.VALEURS);
-
-        setAnalytique([...newAnalytique]);
-      }
-    } else {
-      let parsedDatas = JSON.parse(analytiqueDev.analytique)[0];
-
-      let newAnalytique = convertObjectToArrayOfObject(parsedDatas.VALEURS);
-
-      setAnalytique([...newAnalytique]);
-    }
+  const handleChargeFiles = (e) => {
+    const arrayOfFiles = Array.from(e.target.files);
+    setSelectedFiles([...selectedFiles, ...arrayOfFiles]);
   };
-  //////////////////////////////// Envoi des données //////////////////////////////////
-  /////
+
   const axiosCall = async () => {
+    const formData = new FormData();
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+      formData.append(`file${i}`, selectedFiles[i]);
+    }
+    formData.append("data", JSON.stringify(state));
     const response = await axios({
       method: "POST",
-      url: "traitement.php",
-      data: state,
+      url: `traitement.php?coll_Id=${dest}`,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
 
     if (response.data.status === "OK") {
@@ -90,6 +56,7 @@ const Form = ({ labels, datas, state, setState }) => {
         setMessage({});
       }, 7000);
       setState({ ...initialStateConfigObject });
+      setSelectedFiles([]);
     } else {
       setMessage({
         message:
@@ -104,18 +71,8 @@ const Form = ({ labels, datas, state, setState }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     axiosCall();
   };
-  ///////////////////////////////////////////////////////////////////////////////////
-
-  ////////////////////////////////////////////////////////////////
-  ///// convertion de l'analytique au format tableau d'objet ////
-  const defaultPropsAnalytique = getDefaultProps(analytique);
-  ////////////////////////////////////////////////////////////////
-
-  ///////////////////////////////////////////////////////////////////////////////////////
-  //// Fonctions de modification de l'etat du formulaire ////
   const handleChangeTextInput = useCallback(
     (e, label) => {
       const { value, name } = e.target;
@@ -140,127 +97,10 @@ const Form = ({ labels, datas, state, setState }) => {
             [shortLabel]: { ...state[label][shortLabel], value: newValue },
           },
         });
-      } else {
-        let oldArticles = [...state["Comptabilité"]["Articles"]];
-
-        oldArticles = oldArticles.map((article, index) => {
-          if (ligne === index) {
-            return {
-              ...article,
-              axeAnalytique: { ...article["axeAnalytique"], value: newValue },
-            };
-          } else {
-            return article;
-          }
-        });
-
-        setState({
-          ...state,
-          Comptabilité: {
-            ...state["Comptabilité"],
-            Articles: [...oldArticles],
-          },
-        });
       }
     },
     [setState, state]
   );
-
-  const handleAddArticle = useCallback(() => {
-    setState({
-      ...state,
-      Comptabilité: {
-        ...state["Comptabilité"],
-        Articles: [...state["Comptabilité"]["Articles"], { ...modeleArticle }],
-      },
-    });
-  }, [setState, state]);
-
-  const handleChangeArticle = useCallback(
-    (ligne) => (e) => {
-      const { name, value } = e.target;
-
-      let oldArticles = [...state["Comptabilité"]["Articles"]];
-
-      oldArticles[ligne][name] = value;
-
-      setState({
-        ...state,
-        Comptabilité: {
-          ...state["Comptabilité"],
-          Articles: [...oldArticles],
-        },
-      });
-    },
-    [setState, state]
-  );
-
-  const handleDeleteArticle = useCallback(
-    (index) => {
-      let oldArticles = [...state["Comptabilité"]["Articles"]];
-
-      let newArticles = oldArticles.filter(
-        (element, indexeElement) => indexeElement !== index
-      );
-
-      setState({
-        ...state,
-        Comptabilité: {
-          ...state["Comptabilité"],
-          Articles: [...newArticles],
-        },
-      });
-    },
-    [setState, state]
-  ); //
-
-  const computeTotalAmount = useCallback(() => {
-    const allArticles = [...state["Comptabilité"]["Articles"]];
-
-    let amount = allArticles.reduce(
-      (sum, element) => sum + Number(element.montantHT),
-      0
-    );
-    return amount;
-  }, [state]);
-  /////////////////////////////////////////////////////////////////////////////////////////
-
-  const checkBudget = (budgetTotal, montantTotalArticles) => {
-    if (budgetTotal && montantTotalArticles) {
-      if (Number(montantTotalArticles) <= Number(budgetTotal)) {
-        setState({
-          ...state,
-          Validation: {
-            ...state.Validation,
-            "Je respecte le Budget": {
-              ...state.Validation["Je respecte le Budget"],
-              value: { id: 1, label: "Oui" },
-              error: false,
-            },
-          },
-        });
-      } else {
-        setState({
-          ...state,
-          Validation: {
-            ...state.Validation,
-            "Je respecte le Budget": {
-              ...state.Validation["Je respecte le Budget"],
-              value: { id: 2, label: "Non" },
-              error: true,
-            },
-          },
-        });
-      }
-    }
-  };
-  let budgetTotal = state["Validation"]["Montant du Budget HT"].value;
-
-  let montantTotalArticles = computeTotalAmount();
-
-  useEffect(() => {
-    checkBudget(budgetTotal, montantTotalArticles);
-  }, [budgetTotal, montantTotalArticles]);
 
   const handleCloseAlertMessage = (event, reason) => {
     if (reason === "clickaway") {
@@ -273,6 +113,7 @@ const Form = ({ labels, datas, state, setState }) => {
   return (
     <Box
       component="form"
+      onKeyDown={(event) => event.key === "Enter" && false}
       sx={{
         border: "1px solid black",
         padding: "1em",
@@ -394,8 +235,13 @@ const Form = ({ labels, datas, state, setState }) => {
                       name={shortLabel}
                       label={state?.[label]?.[shortLabel]?.label ?? shortLabel}
                       required={required}
+                      multiline={
+                        type === "TEXT" && shortLabel !== "Objet" ? true : false
+                      }
+                      maxRows={4}
                       inputProps={
-                        state?.[label]?.[shortLabel]?.type === "date"
+                        state?.[label]?.[shortLabel]?.type === "date" ||
+                        state?.[label]?.[shortLabel]?.type === "number"
                           ? {
                               min: state?.[label]?.[shortLabel]?.min,
                             }
@@ -404,7 +250,7 @@ const Form = ({ labels, datas, state, setState }) => {
                       value={
                         shortLabel !== "Total Articles Prestations HT"
                           ? state?.[label]?.[shortLabel]?.value
-                          : computeTotalAmount()
+                          : ""
                       }
                       onChange={(e) => handleChangeTextInput(e, label)}
                     />
@@ -416,209 +262,7 @@ const Form = ({ labels, datas, state, setState }) => {
                         flexDirection: "column",
                         alignItems: "center",
                       }}
-                    >
-                      <Stack spacing={3}>
-                        {Object.keys(state).length > 0 &&
-                          state["Comptabilité"]["Articles"].map(
-                            (element, index) => (
-                              <Container key={index}>
-                                <Stack spacing={2}>
-                                  <FormControl
-                                    size="small"
-                                    fullWidth
-                                    required={required}
-                                  >
-                                    <InputLabel id="nom_article_ventilation">
-                                      Nom de l'article / Prestation
-                                    </InputLabel>
-                                    <Select
-                                      name="nomArticleVentilation"
-                                      labelId="nom_article_ventilation"
-                                      label="Nom de l'article / Prestation"
-                                      value={
-                                        state["Comptabilité"]["Articles"][
-                                          index
-                                        ]["nomArticleVentilation"]
-                                      }
-                                      onChange={handleChangeArticle(index)}
-                                    >
-                                      {Object.keys(valeurs).map((valeur) => {
-                                        const article = `${valeurs[valeur]}`;
-                                        return (
-                                          <MenuItem key={valeur} value={valeur}>
-                                            {article}
-                                          </MenuItem>
-                                        );
-                                      })}
-                                    </Select>
-                                  </FormControl>
-                                  <FormControl
-                                    size="small"
-                                    fullWidth
-                                    required={required}
-                                  >
-                                    <TextField
-                                      size="small"
-                                      name="commentaire"
-                                      id="commentaire_article"
-                                      label="Commentaire"
-                                      value={
-                                        state["Comptabilité"]["Articles"][
-                                          index
-                                        ]["commentaire"]
-                                      }
-                                      onChange={handleChangeArticle(index)}
-                                    />
-                                  </FormControl>
-                                  <FormControl
-                                    size="small"
-                                    fullWidth
-                                    required={required}
-                                  >
-                                    <TextField
-                                      size="small"
-                                      name="montantHT"
-                                      id="montant_ht_ventilation"
-                                      label="Montant HT"
-                                      required={required}
-                                      value={
-                                        state["Comptabilité"]["Articles"][
-                                          index
-                                        ]["montantHT"]
-                                      }
-                                      onChange={handleChangeArticle(index)}
-                                    />
-                                  </FormControl>
-                                  <FormControl
-                                    size="small"
-                                    fullWidth
-                                    required={required}
-                                  >
-                                    <InputLabel id="compte_comptable_TVA">
-                                      Compte comptable
-                                    </InputLabel>
-                                    <Select
-                                      size="small"
-                                      disabled
-                                      name="nomArticleVentilation"
-                                      labelId="compte_comptable_TVA"
-                                      label="Compte comptable"
-                                      value={
-                                        state["Comptabilité"]["Articles"][
-                                          index
-                                        ]["nomArticleVentilation"]
-                                      }
-                                    >
-                                      <MenuItem
-                                        key={
-                                          state["Comptabilité"]["Articles"][
-                                            index
-                                          ]["nomArticleVentilation"]
-                                        }
-                                        value={
-                                          state["Comptabilité"]["Articles"][
-                                            index
-                                          ]["nomArticleVentilation"]
-                                        }
-                                      >
-                                        {`${
-                                          valeurs?.[
-                                            state["Comptabilité"]["Articles"][
-                                              index
-                                            ]["nomArticleVentilation"]
-                                          ]?.split(" - ")[2]
-                                        } - ${
-                                          valeurs?.[
-                                            state["Comptabilité"]["Articles"][
-                                              index
-                                            ]["nomArticleVentilation"]
-                                          ]?.split(" - ")[3]
-                                        }`}
-                                      </MenuItem>
-                                    </Select>
-                                  </FormControl>
-                                  {Object.keys(analytique).length > 0 && (
-                                    <FormControl required={required}>
-                                      <Autocomplete
-                                        {...defaultPropsAnalytique}
-                                        fullWidth
-                                        id={`${"custom_n1"}__${"axeAnalytique"}__`}
-                                        value={
-                                          state["Comptabilité"]["Articles"][
-                                            index
-                                          ]["axeAnalytique"]?.value ?? ""
-                                        }
-                                        onChange={(e, newValue) =>
-                                          handleChangeSelectInput(
-                                            e,
-                                            label,
-                                            newValue,
-                                            index
-                                          )
-                                        }
-                                        disablePortal
-                                        disableClearable
-                                        autoComplete
-                                        renderInput={(params) => (
-                                          <TextField
-                                            required={required}
-                                            sx={{ fontSize: "12px" }}
-                                            error={
-                                              state?.[label]?.[shortLabel]
-                                                ?.error ?? false
-                                            }
-                                            {...params}
-                                            label="Axe Analytique"
-                                            variant="filled"
-                                            size="small"
-                                          />
-                                        )}
-                                      />
-                                    </FormControl>
-                                  )}
-                                </Stack>
-
-                                <Container
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <Button
-                                    sx={{
-                                      marginTop: "12px",
-                                    }}
-                                    variant="contained"
-                                    color="error"
-                                    type="button"
-                                    size="small"
-                                    onClick={() => handleDeleteArticle(index)}
-                                  >
-                                    <ClearIcon />
-                                  </Button>
-                                </Container>
-                              </Container>
-                            )
-                          )}
-                        <Container
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            marginTop: "8px !important",
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            color="success"
-                            type="button"
-                            size="small"
-                            onClick={() => handleAddArticle()}
-                          >
-                            <AddIcon />
-                          </Button>
-                        </Container>
-                      </Stack>
-                    </Container>
+                    ></Container>
                   )}
                 </FormControl>
               );
@@ -627,9 +271,65 @@ const Form = ({ labels, datas, state, setState }) => {
         );
       })}
 
+      {selectedFiles.length > 0 && (
+        <>
+          <Divider sx={{ margin: "15px" }} />
+          <Stack
+            spacing={4}
+            sx={{
+              display: "flex",
+              marginTop: "15px",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {selectedFiles.map((file, index) => {
+              return (
+                <Stack key={index} spacing={4}>
+                  <Button
+                    variant="contained"
+                    component="label"
+                    color="warning"
+                    startIcon={<AttachFileIcon />}
+                    onClick={() => {
+                      setSelectedFiles(
+                        selectedFiles.filter((file, i) => i !== index)
+                      );
+                    }}
+                  >
+                    Supprimer {file.name}
+                  </Button>
+                </Stack>
+              );
+            })}
+          </Stack>
+          <Divider sx={{ margin: "15px" }} />
+        </>
+      )}
+
       <Container
-        sx={{ marginTop: "2em", display: "flex", justifyContent: "center" }}
+        sx={{
+          marginTop: "2em",
+          display: "flex",
+          justifyContent: "space-around",
+        }}
       >
+        <Button
+          variant="contained"
+          component="label"
+          startIcon={<AttachFileIcon />}
+        >
+          Joindre des documents
+          <input
+            hidden
+            accept="*/*"
+            multiple
+            name="file"
+            type="file"
+            onChange={handleChargeFiles}
+          />
+        </Button>
+
         <Button size="large" variant="contained" color="success" type="submit">
           <CheckIcon />
           Soumettre
